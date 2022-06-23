@@ -1,0 +1,58 @@
+.create-course {
+
+  .wrapper > button {
+    position: absolute;
+    right: -15px;
+  }
+
+  .details-block {
+    display: grid;
+    grid-template-areas: "block-1 block-2"  
+                        "block-3 block-4"; 
+    grid-template-columns: repeat(2, 1fr);
+    margin: 15px 0;
+    padding: 0 15px;
+    border: 1px solid black;
+
+    .details-block-title {
+      text-align: center;
+    }
+
+    .add-author-block {
+      grid-area: block-1;
+
+      > button {
+        display: block;
+        margin: 10px auto;
+      }
+    }
+
+    .duration-block {
+      grid-area: block-3;
+
+      .duration-string {
+        font-size: 25px;
+
+        .duration-string-number {
+          font-size: 30px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .existed-authors-block {
+      grid-area: block-2;
+      text-align: center;
+
+    }
+
+    .course-authors-block {
+      grid-area: block-4;
+      text-align: center;
+    }
+  }
+}
+
+.create-course > label {
+   margin-top: 15px;
+}
