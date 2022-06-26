@@ -1,61 +1,42 @@
 import React, { ChangeEvent } from 'react';
 import { TextField, FormLabel } from '@mui/material';
-import { styled } from '@mui/material/styles';
 
-type InputProps = {
+import styles from './Input.module.scss';
+
+type Props = {
   placeholderText: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  inputValue: string | number;
-  inputWidth?: string;
-  fullWidth?: boolean;
+  value: string | number;
   inputType: string;
   label?: string;
   name?: string;
 };
 
-const CustomizedTextField = styled(TextField)`
-  .MuiOutlinedInput-notchedOutline {
-    border: none;
-  }
-`;
-
-export const Input: React.FC<InputProps> = ({
+export const Input: React.FC<Props> = ({
   placeholderText,
   onChange,
-  inputValue,
-  inputWidth = '400px',
-  fullWidth = false,
+  value,
   inputType,
   label,
   name,
 }) => {
-  const InputStyledProps = {
-    style: {
-      name: 'InputProps',
-      width: fullWidth ? '100%' : inputWidth,
-      height: '30px',
-      border: '1px solid orange',
-      borderRadius: '1px',
-    },
-  };
-
   return (
     <>
-      <FormLabel htmlFor="input" sx={{ display: 'block' }}>
+      <FormLabel htmlFor="input" classes={{ root: styles.formLabel }}>
         {label}
       </FormLabel>
-      <CustomizedTextField
+      <TextField
         id="input"
-        value={inputValue}
+        value={value}
         type={inputType}
         placeholder={placeholderText}
         color="warning"
-        variant="outlined"
-        InputProps={InputStyledProps}
+        classes={{
+          root: styles.formControl,
+        }}
         onChange={onChange}
-        fullWidth={fullWidth}
-        InputLabelProps={{ required: false }}
         name={name}
+        fullWidth
       />
     </>
   );

@@ -4,27 +4,28 @@ import { Input } from '../../../../common/Input';
 import { Button } from '../../../../common/Button';
 import { BUTTON_TEXT_SEARCH } from '../../../../constants';
 
-type SearchBarProps = {
+import styles from './SearchBar.module.scss';
+
+type Props = {
   handleInputChange: EventHandler<FormEvent>;
-  enteredText: string;
+  value: string;
   handleSearchBtn: () => void;
 };
 
-export const SearchBar: React.FC<SearchBarProps> = ({
+export const SearchBar: React.FC<Props> = ({
+  value,
   handleInputChange,
-  enteredText,
   handleSearchBtn,
 }) => {
   return (
-    <>
+    <div className={styles.container}>
       <Input
         placeholderText="Enter course name or id..."
-        inputValue={enteredText}
+        value={value}
         onChange={handleInputChange}
-        inputWidth="600px"
         inputType="search"
       />
-      <Button buttonText={BUTTON_TEXT_SEARCH} onClick={handleSearchBtn} />
-    </>
+      <Button text={BUTTON_TEXT_SEARCH} onClick={handleSearchBtn} />
+    </div>
   );
 };

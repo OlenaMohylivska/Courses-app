@@ -1,24 +1,30 @@
-.create-course {
+.formControl {
+  display: block;
+  line-height: 0.9;
 
-  .wrapper > button {
+  .inputWrapper {
+    width: 500px;
+  }
+
+  .inputWrapper > button {
     position: absolute;
     right: -15px;
   }
 
-  .details-block {
+  .detailsBlock {
     display: grid;
     grid-template-areas: "block-1 block-2"  
                         "block-3 block-4"; 
     grid-template-columns: repeat(2, 1fr);
-    margin: 15px 0;
+    margin-top: 15px;
     padding: 0 15px;
     border: 1px solid black;
 
-    .details-block-title {
+    .title {
       text-align: center;
     }
 
-    .add-author-block {
+    .authorBlock {
       grid-area: block-1;
 
       > button {
@@ -27,32 +33,32 @@
       }
     }
 
-    .duration-block {
+    .durationBlock {
       grid-area: block-3;
 
-      .duration-string {
+      .durationString {
         font-size: 25px;
 
-        .duration-string-number {
+        .durationStringNumber {
           font-size: 30px;
           font-weight: bold;
         }
       }
     }
 
-    .existed-authors-block {
+    .existedAuthorsBlock {
       grid-area: block-2;
       text-align: center;
 
     }
 
-    .course-authors-block {
+    .courseAuthorsBlock {
       grid-area: block-4;
       text-align: center;
     }
   }
 }
 
-.create-course > label {
+.formControl > label {
    margin-top: 15px;
 }
