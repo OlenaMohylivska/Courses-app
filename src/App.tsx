@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
-
+import { StyledEngineProvider } from '@mui/material';
 import { Header } from './components/Header/Header';
 import { Courses } from './components/Courses';
 import { mockedCoursesList, mockedAuthorsList } from './constants';
 import { CreateCourse } from './components/CreateCourse';
 import { ICourse, IAuthor } from './helpers/interfaces';
-import './App.css';
+
+import styles from './App.module.scss';
 
 const App: React.FC = () => {
   const [isCreateCourse, setIsCreateCourse] = useState<boolean>(false);
@@ -30,23 +31,27 @@ const App: React.FC = () => {
   }, [coursesList, authorsList]);
 
   return (
-    <>
-      <Header />
-      {!isCreateCourse ? (
-        <Courses
-          fullCoursesData={fullCoursesData}
-          setIsCreateCourse={setIsCreateCourse}
-        />
-      ) : (
-        <CreateCourse
-          coursesList={coursesList}
-          setCoursesList={setCoursesList}
-          setAuthorsList={setAuthorsList}
-          authorsList={authorsList}
-          setIsCreateCourse={setIsCreateCourse}
-        />
-      )}
-    </>
+    <StyledEngineProvider injectFirst>
+      <div className={styles.container}>
+        <Header />
+        <div className={styles.content}>
+          {!isCreateCourse ? (
+            <Courses
+              fullCoursesData={fullCoursesData}
+              setIsCreateCourse={setIsCreateCourse}
+            />
+          ) : (
+            <CreateCourse
+              coursesList={coursesList}
+              setCoursesList={setCoursesList}
+              setAuthorsList={setAuthorsList}
+              authorsList={authorsList}
+              setIsCreateCourse={setIsCreateCourse}
+            />
+          )}
+        </div>
+      </div>
+    </StyledEngineProvider>
   );
 };
 

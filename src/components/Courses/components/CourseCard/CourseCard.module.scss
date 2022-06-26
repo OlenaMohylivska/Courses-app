@@ -1,20 +1,20 @@
-.course-card {
+.card {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 15px 0;
+  margin-top: 15px;
   padding: 20px;
   border: 2px solid green;
 
-  .course-card-info {
+  .info {
     width: 65%;
 
-    .course-card-info-title {
+    .title {
       margin: 10px 0;
     }
   }
 
-  .course-card-details {
+  .details {
     width: 30%;
   
     .authors {
@@ -22,12 +22,13 @@
       overflow: hidden;
       text-overflow: ellipsis;
 
-      .course-card-details-title {
-        font-weight: bold;
-      }
+    }
+
+    .detailsTitle {
+      font-weight: bold;
     }
     
-    .btn-show-course {
+    .buttonContainer {
       text-align: center;
     }
   }

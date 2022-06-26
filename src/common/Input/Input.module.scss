@@ -1,0 +1,18 @@
+.formLabel {
+  display: block;
+}
+
+.formControl {
+  height: 30px;
+  border: 1px solid orange;
+  border-radius: 1px;
+}
+
+.formControl fieldset {
+  border: none;
+}
+
+.formControl input {
+  height: 30px;
+  padding: 0 15px;
+}

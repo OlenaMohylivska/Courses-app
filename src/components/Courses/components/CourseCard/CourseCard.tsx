@@ -5,16 +5,16 @@ import { BUTTON_TEXT_SHOW_COURSE } from '../../../../constants';
 import { getCourseDuration } from '../../../../helpers/getCourseDuration';
 import { formatCreationDate } from '../../../../helpers/formatCreationDate';
 
-import './styles.scss';
+import styles from './CourseCard.module.scss';
 
-type CourseCardProps = {
+type Props = {
   title: string;
   description: string;
   creationDate: string;
   duration: number;
   authors: string;
 };
-export const CourseCard: React.FC<CourseCardProps> = ({
+export const CourseCard: React.FC<Props> = ({
   title,
   description,
   creationDate,
@@ -22,31 +22,31 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   authors,
 }) => {
   return (
-    <div className="course-card">
-      <div className="course-card-info">
-        <h2 className="course-card-info-title">{title}</h2>
-        <p className="course-card-info-description">{description}</p>
+    <section className={styles.card}>
+      <div className={styles.info}>
+        <h2 className={styles.title}>{title}</h2>
+        <p>{description}</p>
       </div>
-      <div className="course-card-details">
-        <p className="authors">
-          <span className="course-card-details-title">Authors: </span>
+      <div className={styles.details}>
+        <p className={styles.authors}>
+          <span className={styles.detailsTitle}>Authors: </span>
           {authors}
         </p>
-        <p className="duration">
-          <span className="course-card-details-title">Duration: </span>
+        <p>
+          <span className={styles.detailsTitle}>Duration: </span>
           {getCourseDuration(duration)}
         </p>
-        <p className="created">
-          <span className="course-card-details-title">Created: </span>
+        <p>
+          <span className={styles.detailsTitle}>Created: </span>
           {formatCreationDate(creationDate)}
         </p>
-        <div className="btn-show-course">
+        <div className={styles.buttonContainer}>
           <Button
-            buttonText={BUTTON_TEXT_SHOW_COURSE}
+            text={BUTTON_TEXT_SHOW_COURSE}
             onClick={() => console.log('course')}
           />
         </div>
       </div>
-    </div>
+    </section>
   );
 };

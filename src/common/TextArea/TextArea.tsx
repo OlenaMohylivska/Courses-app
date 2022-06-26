@@ -1,39 +1,36 @@
 import React, { ChangeEvent } from 'react';
 import { TextareaAutosize, FormLabel } from '@mui/material';
 
-type TextAreaProps = {
+import styles from './TextArea.module.scss';
+
+type Props = {
   placeholder: string;
   label?: string;
-  textAreaValue: string;
-  // eslint-disable-next-line no-unused-vars
+  value: string;
   onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
   name?: string;
 };
 
-export const TextArea: React.FC<TextAreaProps> = ({
+export const TextArea: React.FC<Props> = ({
   placeholder,
   label,
-  textAreaValue,
+  value,
   onChange,
   name,
 }) => {
   return (
     <>
-      <FormLabel htmlFor="textareaa" sx={{ display: 'block' }}>
+      <FormLabel className={styles.formLabel} htmlFor="textarea">
         {label}
       </FormLabel>
       <TextareaAutosize
         id="textarea"
+        className={styles.textarea}
         minRows={5}
         placeholder={placeholder}
-        value={textAreaValue}
+        value={value}
         onChange={onChange}
         name={name}
-        style={{
-          width: '100%',
-          boxSizing: 'border-box',
-          border: '2px solid yellow',
-        }}
       />
     </>
   );

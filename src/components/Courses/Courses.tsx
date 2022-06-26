@@ -12,67 +12,67 @@ import { Button } from '../../common/Button';
 import { ICourse } from '../../helpers/interfaces';
 import { BUTTON_TEXT_ADD_NEW_COURSE } from '../../constants';
 
-import './styles.scss';
+import styles from './Courses.module.scss';
 
-type CoursesProps = {
+type Props = {
   fullCoursesData: ICourse[];
   setIsCreateCourse: Dispatch<SetStateAction<boolean>>;
 };
 
-export const Courses: React.FC<CoursesProps> = ({
+export const Courses: React.FC<Props> = ({
   fullCoursesData,
   setIsCreateCourse,
 }) => {
   const [courses, setCourses] = useState<ICourse[]>(fullCoursesData);
 
-  const [enteredText, setEnteredText] = useState('');
-
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setEnteredText(event.target.value);
-  };
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
-    if (!enteredText) {
+    if (!searchValue) {
       setCourses(fullCoursesData);
     }
-  }, [enteredText, fullCoursesData]);
+  }, [searchValue, fullCoursesData]);
 
   const handleSearchBtn = () => {
     setCourses(
       fullCoursesData.filter((course) => {
         return (
-          course.title.toLowerCase().includes(enteredText.toLowerCase()) ||
-          course.id.toLowerCase().includes(enteredText.toLowerCase())
+          course.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+          course.id.toLowerCase().includes(searchValue.toLowerCase())
         );
       })
     );
   };
 
   return (
-    <div className="courses">
+    <div>
       <SearchBar
-        enteredText={enteredText}
-        handleInputChange={handleInputChange}
+        value={searchValue}
+        handleInputChange={(event: ChangeEvent<HTMLInputElement>) =>
+          setSearchValue(event.target.value)
+        }
         handleSearchBtn={handleSearchBtn}
       />
-      <div className="add-course-btn">
+      <div className={styles.button}>
         <Button
-          buttonText={BUTTON_TEXT_ADD_NEW_COURSE}
+          text={BUTTON_TEXT_ADD_NEW_COURSE}
           onClick={() => setIsCreateCourse(true)}
         />
       </div>
-      {courses.map((courseList) => {
-        return (
-          <CourseCard
-            key={courseList.id}
-            title={courseList.title}
-            description={courseList.description}
-            creationDate={courseList.creationDate}
-            duration={courseList.duration}
-            authors={courseList.authors.join(', ')}
-          />
-        );
-      })}
+      {courses.map(
+        ({ id, title, description, creationDate, duration, authors }) => {
+          return (
+            <CourseCard
+              key={id}
+              title={title}
+              description={description}
+              creationDate={creationDate}
+              duration={duration}
+              authors={authors.join(', ')}
+            />
+          );
+        }
+      )}
     </div>
   );
 };

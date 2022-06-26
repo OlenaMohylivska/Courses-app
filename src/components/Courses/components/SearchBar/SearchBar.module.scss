@@ -1,0 +1,8 @@
+.container {
+  display: inline-block;
+  width: 600px;
+}
+
+.container > button {
+  position: absolute;
+}

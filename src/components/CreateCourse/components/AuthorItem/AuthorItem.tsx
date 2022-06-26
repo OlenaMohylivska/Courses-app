@@ -2,23 +2,23 @@ import React from 'react';
 
 import { Button } from '../../../../common/Button';
 
-import './styles.scss';
+import styles from './AuthorItem.module.scss';
 
-type AuthorItemProps = {
+type Props = {
   authorName: string;
   buttonText: string;
   onBtnClick: () => void;
 };
 
-export const AuthorItem: React.FC<AuthorItemProps> = ({
+export const AuthorItem: React.FC<Props> = ({
   authorName,
   buttonText,
   onBtnClick,
 }) => {
   return (
-    <div className="author-item">
+    <div className={styles.container}>
       <span>{authorName}</span>
-      <Button buttonText={buttonText} onClick={onBtnClick} />
+      <Button text={buttonText} onClick={onBtnClick} />
     </div>
   );
 };
