@@ -87,9 +87,13 @@ export const CreateCourse: React.FC<Props> = ({
       });
     }
 
-    const isValid = !Object.values(newCourse).some((field) => !field);
+    const validateField: string[] = ['title', 'description', 'duration'];
 
-    if (!isValid || !newCourse.authors.length) {
+    const isVal = validateField.some(
+      (key) => newCourse[key as keyof ICourse] === ''
+    );
+
+    if (isVal || !newCourse.authors.length) {
       alert(errorMessage);
     } else {
       setCoursesList([...coursesList, newCourse]);
