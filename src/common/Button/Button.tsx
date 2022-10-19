@@ -5,7 +5,7 @@ import styles from './Button.module.scss';
 
 type Props = {
   text: string;
-  onClick: (event?: React.MouseEvent<HTMLElement>) => void;
+  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
 };
 
 export const Button: React.FC<Props> = ({ text, onClick }) => (

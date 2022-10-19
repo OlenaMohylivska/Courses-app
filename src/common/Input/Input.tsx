@@ -21,7 +21,7 @@ export const Input: React.FC<Props> = ({
   name,
 }) => {
   return (
-    <>
+    <div className={styles.input}>
       <FormLabel htmlFor="input" classes={{ root: styles.formLabel }}>
         {label}
       </FormLabel>
@@ -38,6 +38,6 @@ export const Input: React.FC<Props> = ({
         name={name}
         fullWidth
       />
-    </>
+    </div>
   );
 };

@@ -1,0 +1,18 @@
+.form {
+  width: 400px;
+  min-height: 76vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  gap: 15px;
+
+  .header {
+    margin: 0;
+    text-align: center;
+  }
+
+  .buttonContainer, .loginBlock {
+    text-align: center;
+  }
+}

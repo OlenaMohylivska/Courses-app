@@ -5,15 +5,15 @@ import React, {
   Dispatch,
   SetStateAction,
 } from 'react';
-import { FormControl, FormGroup } from '@mui/material';
+import { FormControl } from '@mui/material';
 import { v4 as toGenerateId } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
 import { Button } from '../../common/Button';
 import { Input } from '../../common/Input';
 import { TextArea } from '../../common/TextArea';
 import { AuthorItem } from './components/AuthorItem';
 import { getCourseDuration } from '../../helpers/getCourseDuration';
-import { getDate } from '../../helpers/getDate';
 import { ICourse, IAuthor } from '../../helpers/interfaces';
 import {
   BUTTON_TEXT_CREATE_COURSE,
@@ -21,6 +21,7 @@ import {
   BUTTON_TEXT_ADD_AUTHOR,
   BUTTON_TEXT_DELETE_AUTHOR,
 } from '../../constants';
+import { ROUTES } from '../../routes';
 
 import styles from './CreateCourse.module.scss';
 
@@ -29,7 +30,6 @@ type Props = {
   setCoursesList: Dispatch<SetStateAction<ICourse[]>>;
   setAuthorsList: Dispatch<SetStateAction<IAuthor[]>>;
   authorsList: IAuthor[];
-  setIsCreateCourse: Dispatch<SetStateAction<boolean>>;
 };
 
 const errorMessage = 'Please, fill in all fields';
@@ -39,15 +39,15 @@ export const CreateCourse: React.FC<Props> = ({
   setCoursesList,
   authorsList,
   setAuthorsList,
-  setIsCreateCourse,
 }) => {
+  const navigate = useNavigate();
   const [authorName, setAuthorName] = useState('');
 
   const [newCourse, setNewCourse] = useState<ICourse>({
-    id: '',
+    id: toGenerateId(),
     title: '',
     description: '',
-    creationDate: '',
+    creationDate: new Date().toLocaleDateString('en-GB'),
     duration: 0,
     authors: [],
   });
@@ -77,125 +77,113 @@ export const CreateCourse: React.FC<Props> = ({
   }, [authorsList, newCourse.authors]);
 
   const saveCourse = () => {
-    if (!newCourse.id) {
-      // console.log('here');
-
-      setNewCourse({
-        ...newCourse,
-        id: toGenerateId(),
-        creationDate: getDate(),
-      });
-    }
-
     const validateField: string[] = ['title', 'description', 'duration'];
 
-    const isVal = validateField.some(
-      (key) => newCourse[key as keyof ICourse] === ''
+    const isValid = !validateField.some(
+      (key) => !newCourse[key as keyof ICourse]
     );
 
-    if (isVal || !newCourse.authors.length) {
+    if (!isValid || !newCourse.authors.length) {
       alert(errorMessage);
     } else {
       setCoursesList([...coursesList, newCourse]);
-      setIsCreateCourse(false);
+      navigate(ROUTES.COURSES, { replace: false });
     }
   };
 
   return (
-    <FormGroup>
-      <FormControl className={styles.formControl}>
-        <div className={styles.inputWrapper}>
-          <Input
-            placeholderText="Enter title..."
-            value={newCourse.title}
-            onChange={handleInputChange}
-            label="Title"
-            inputType="text"
-            name="title"
-          />
-          <Button text={BUTTON_TEXT_CREATE_COURSE} onClick={saveCourse} />
-        </div>
-        <TextArea
-          placeholder="Enter description..."
-          label="Description"
-          value={newCourse.description}
+    <FormControl className={styles.formControl}>
+      <div className={styles.inputWrapper}>
+        <Input
+          placeholderText="Enter title..."
+          value={newCourse.title}
           onChange={handleInputChange}
-          name="description"
+          label="Title"
+          inputType="text"
+          name="title"
         />
-        <div className={styles.detailsBlock}>
-          <div className={styles.authorBlock}>
-            <h4 className={styles.title}>Add author</h4>
-            <Input
-              placeholderText="Enter author name..."
-              value={authorName}
-              onChange={(event) => setAuthorName(event.target.value)}
-              inputType="text"
-              name="name"
-            />
-            <Button text={BUTTON_TEXT_CREATE_AUTHOR} onClick={onAuthorCreate} />
-          </div>
-          <div className={styles.durationBlock}>
-            <h4 className={styles.title}>Duration</h4>
-            <Input
-              placeholderText="Enter duration in minutes..."
-              value={newCourse.duration > 0 ? newCourse.duration : ''}
-              onChange={handleInputChange}
-              inputType="number"
-              name="duration"
-            />
-            <p className={styles.durationString}>
-              Duration:
-              <span className={styles.durationStringNumber}>
-                {getCourseDuration(newCourse.duration).slice(0, 5)}
-              </span>
-              {getCourseDuration(newCourse.duration).slice(5)}
-            </p>
-          </div>
-
-          <div className={styles.existedAuthorsBlock}>
-            <h4 className={styles.title}>Authors</h4>
-
-            {authors.map((author) => (
-              <AuthorItem
-                authorName={author.name}
-                key={author.id}
-                buttonText={BUTTON_TEXT_ADD_AUTHOR}
-                onBtnClick={() =>
-                  setNewCourse({
-                    ...newCourse,
-                    authors: [...newCourse.authors, author.id],
-                  })
-                }
-              />
-            ))}
-          </div>
-          <div className={styles.courseAuthorsBlock}>
-            <h4 className={styles.title}>Course authors</h4>
-            {newCourse.authors.length ? (
-              newCourse.authors.map((authorId) => {
-                const author = authorsList.find((el) => el.id === authorId);
-                return (
-                  <AuthorItem
-                    authorName={author!.name}
-                    key={authorId}
-                    buttonText={BUTTON_TEXT_DELETE_AUTHOR}
-                    onBtnClick={() =>
-                      setNewCourse({
-                        ...newCourse,
-                        authors: newCourse.authors.filter(
-                          (el) => el !== authorId
-                        ),
-                      })
-                    }
-                  />
-                );
-              })
-            ) : (
-              <p>Author list is empty</p>
-            )}
-          </div>
+        <Button text={BUTTON_TEXT_CREATE_COURSE} onClick={saveCourse} />
+      </div>
+      <TextArea
+        placeholder="Enter description..."
+        label="Description"
+        value={newCourse.description}
+        onChange={handleInputChange}
+        name="description"
+      />
+      <div className={styles.detailsBlock}>
+        <div className={styles.authorBlock}>
+          <h4 className={styles.title}>Add author</h4>
+          <Input
+            placeholderText="Enter author name..."
+            value={authorName}
+            onChange={(event) => setAuthorName(event.target.value)}
+            inputType="text"
+            name="name"
+          />
+          <Button text={BUTTON_TEXT_CREATE_AUTHOR} onClick={onAuthorCreate} />
         </div>
-      </FormControl>
-    </FormGroup>
+        <div className={styles.durationBlock}>
+          <h4 className={styles.title}>Duration</h4>
+          <Input
+            placeholderText="Enter duration in minutes..."
+            value={newCourse.duration > 0 ? newCourse.duration : ''}
+            onChange={handleInputChange}
+            inputType="number"
+            name="duration"
+          />
+          <p className={styles.durationString}>
+            Duration:
+            <span className={styles.durationStringNumber}>
+              {getCourseDuration(newCourse.duration).slice(0, 5)}
+            </span>
+            {getCourseDuration(newCourse.duration).slice(5)}
+          </p>
+        </div>
+
+        <div className={styles.existedAuthorsBlock}>
+          <h4 className={styles.title}>Authors</h4>
+
+          {authors.map((author) => (
+            <AuthorItem
+              authorName={author.name}
+              key={author.id}
+              buttonText={BUTTON_TEXT_ADD_AUTHOR}
+              onBtnClick={() =>
+                setNewCourse({
+                  ...newCourse,
+                  authors: [...newCourse.authors, author.id],
+                })
+              }
+            />
+          ))}
+        </div>
+        <div className={styles.courseAuthorsBlock}>
+          <h4 className={styles.title}>Course authors</h4>
+          {newCourse.authors.length ? (
+            newCourse.authors.map((authorId) => {
+              const author = authorsList.find((el) => el.id === authorId);
+              return (
+                <AuthorItem
+                  authorName={author!.name}
+                  key={authorId}
+                  buttonText={BUTTON_TEXT_DELETE_AUTHOR}
+                  onBtnClick={() =>
+                    setNewCourse({
+                      ...newCourse,
+                      authors: newCourse.authors.filter(
+                        (el) => el !== authorId
+                      ),
+                    })
+                  }
+                />
+              );
+            })
+          ) : (
+            <p>Author list is empty</p>
+          )}
+        </div>
+      </div>
+    </FormControl>
   );
 };
