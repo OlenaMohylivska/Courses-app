@@ -1,28 +1,21 @@
-import React, {
-  useState,
-  ChangeEvent,
-  useEffect,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { SearchBar } from './components/SearchBar';
 import { CourseCard } from './components/CourseCard';
 import { Button } from '../../common/Button';
 import { ICourse } from '../../helpers/interfaces';
 import { BUTTON_TEXT_ADD_NEW_COURSE } from '../../constants';
+import { ROUTES } from '../../routes';
 
 import styles from './Courses.module.scss';
 
 type Props = {
   fullCoursesData: ICourse[];
-  setIsCreateCourse: Dispatch<SetStateAction<boolean>>;
 };
 
-export const Courses: React.FC<Props> = ({
-  fullCoursesData,
-  setIsCreateCourse,
-}) => {
+export const Courses: React.FC<Props> = ({ fullCoursesData }) => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState<ICourse[]>(fullCoursesData);
 
   const [searchValue, setSearchValue] = useState('');
@@ -56,23 +49,12 @@ export const Courses: React.FC<Props> = ({
       <div className={styles.button}>
         <Button
           text={BUTTON_TEXT_ADD_NEW_COURSE}
-          onClick={() => setIsCreateCourse(true)}
+          onClick={() => navigate(ROUTES.ADD_COURSE)}
         />
       </div>
-      {courses.map(
-        ({ id, title, description, creationDate, duration, authors }) => {
-          return (
-            <CourseCard
-              key={id}
-              title={title}
-              description={description}
-              creationDate={creationDate}
-              duration={duration}
-              authors={authors.join(', ')}
-            />
-          );
-        }
-      )}
+      {courses.map((course) => {
+        return <CourseCard key={course.id} course={course} />;
+      })}
     </div>
   );
 };
