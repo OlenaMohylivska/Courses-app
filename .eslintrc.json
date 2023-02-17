@@ -39,6 +39,7 @@
         "import/extensions": 0,
         "import/prefer-default-export": "off",
         "react/require-default-props": "off",
+        "default-param-last": "off",
         "react/function-component-definition": [
             2,
             {

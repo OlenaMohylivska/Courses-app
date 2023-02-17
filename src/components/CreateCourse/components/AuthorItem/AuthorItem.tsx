@@ -18,7 +18,7 @@ export const AuthorItem: React.FC<Props> = ({
   return (
     <div className={styles.container}>
       <span>{authorName}</span>
-      <Button text={buttonText} onClick={onBtnClick} />
+      <Button onClick={onBtnClick}>{buttonText}</Button>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { ROUTES } from '../../routes';
 import { ICourse } from '../../helpers/interfaces';
@@ -7,13 +7,9 @@ import { getCourseDuration } from '../../helpers/getCourseDuration';
 
 import styles from './CourseInfo.module.scss';
 
-type Props = {
-  fullCoursesData: ICourse[];
-};
-
-export const CourseInfo: React.FC<Props> = ({ fullCoursesData }) => {
-  const { courseId } = useParams<{ courseId: string }>();
-  const course = fullCoursesData.find((el) => el.id === courseId);
+export const CourseInfo: React.FC = () => {
+  const location = useLocation();
+  const course = location.state as ICourse;
 
   return (
     <div className={styles.wrapper}>
@@ -43,7 +39,7 @@ export const CourseInfo: React.FC<Props> = ({ fullCoursesData }) => {
 
               <p>
                 <span className={styles.detailsTitle}>Authors: </span>
-                {course.authors.join(', ')}
+                {course.authorsNames?.join(', ')}
               </p>
             </div>
           </div>
