@@ -1,45 +1,46 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { StyledEngineProvider } from '@mui/material';
 import { Route, Routes, Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Header } from './components/Header/Header';
 import { Courses } from './components/Courses';
-import { mockedCoursesList, mockedAuthorsList } from './constants';
 import { CreateCourse } from './components/CreateCourse';
-import { ICourse, IAuthor } from './helpers/interfaces';
-import { ROUTES } from './routes';
 import { Registration } from './components/Registration';
 import { Login } from './components/Login';
 import { CourseInfo } from './components/CourseInfo/CourseInfo';
 import { RequireAuth } from './components/RequireAuth';
+import { ROUTES } from './routes';
+import { fetchCoursesList, getAllAuthors } from './services';
+import { getUser } from './store/user/selectors';
+import { getCourses } from './store/courses/selectors';
+import { getAuthors } from './store/authors/selectors';
+import { ICourse, IAuthor, IUserState } from './helpers/interfaces';
 
 import styles from './App.module.scss';
 
 const App: React.FC = () => {
-  const [coursesList, setCoursesList] = useState<ICourse[]>(mockedCoursesList);
-  const [authorsList, setAuthorsList] = useState<IAuthor[]>(mockedAuthorsList);
+  const dispatch = useDispatch();
+  const allCourses: ICourse[] = useSelector(getCourses);
+  const allAuthors: IAuthor[] = useSelector(getAuthors);
+  const user: IUserState = useSelector(getUser);
 
-  const fullCoursesData = useMemo(() => {
-    const authorsMap = authorsList.reduce(
-      (acc: { [key: string]: { name: string; id: string } }, curr) => {
-        acc[curr.id] = curr;
-        return acc;
-      },
-      {}
-    );
+  useEffect(() => {
+    if (user.isAuth) {
+      if (!allCourses.length) {
+        fetchCoursesList(dispatch);
+      }
 
-    return coursesList.map((course) => {
-      return {
-        ...course,
-        authors: course.authors.map((authorId) => authorsMap[authorId].name),
-      };
-    });
-  }, [coursesList, authorsList]);
+      if (!allAuthors.length) {
+        getAllAuthors(dispatch);
+      }
+    }
+  }, [user.isAuth]);
 
   return (
     <StyledEngineProvider injectFirst>
       <div className={styles.container}>
-        <Header />
+        <Header userName={user.name} />
         <div className={styles.content}>
           <Routes>
             <Route path={ROUTES.LOGIN} element={<Login />} />
@@ -53,23 +54,15 @@ const App: React.FC = () => {
 
               <Route
                 path={ROUTES.COURSES}
-                element={<Courses fullCoursesData={fullCoursesData} />}
+                element={
+                  <Courses allCourses={allCourses} allAuthors={allAuthors} />
+                }
               />
 
-              <Route
-                path={ROUTES.COURSE_ID}
-                element={<CourseInfo fullCoursesData={fullCoursesData} />}
-              />
+              <Route path={ROUTES.COURSE_ID} element={<CourseInfo />} />
               <Route
                 path={ROUTES.ADD_COURSE}
-                element={
-                  <CreateCourse
-                    coursesList={coursesList}
-                    setCoursesList={setCoursesList}
-                    setAuthorsList={setAuthorsList}
-                    authorsList={authorsList}
-                  />
-                }
+                element={<CreateCourse allAuthors={allAuthors} />}
               />
             </Route>
           </Routes>

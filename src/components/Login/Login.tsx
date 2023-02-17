@@ -1,11 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 
 import { ILogin } from '../../helpers/interfaces';
 import { Input } from '../../common/Input';
 import { Button } from '../../common/Button/Button';
 import { ROUTES } from '../../routes';
+import { logIn } from '../../store/user/actionCreators';
 
 import styles from './Login.module.scss';
 
@@ -16,12 +18,10 @@ export const Login: React.FC = () => {
     email: '',
     password: '',
   });
-
+  const dispatch = useDispatch();
   const [hasError, setError] = useState(false);
 
   const navigate = useNavigate();
-
-  localStorage.clear();
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
@@ -37,9 +37,17 @@ export const Login: React.FC = () => {
         },
       })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.data.successful) {
           localStorage.setItem('userToken', response.data.result);
-          localStorage.setItem('userName', response.data.user.name);
+
+          const userInfo = {
+            isAuth: true,
+            name: response.data.user.name,
+            email: response.data.user.email,
+            token: response.data.result,
+          };
+
+          dispatch(logIn(userInfo));
           navigate(ROUTES.COURSES, { replace: true });
         }
       })
@@ -75,7 +83,7 @@ export const Login: React.FC = () => {
         onChange={handleInputChange}
       />
       <div className={styles.buttonContainer}>
-        <Button text="Login" />
+        <Button>Login</Button>
       </div>
       <div className={styles.loginBlock}>
         <span>If you don&apos;t have an account you can </span>

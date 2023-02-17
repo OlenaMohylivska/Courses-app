@@ -36,7 +36,7 @@ export const Registration: React.FC = () => {
         },
       })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.data.successful) {
           navigate(ROUTES.LOGIN, { replace: true });
         }
       })
@@ -80,7 +80,7 @@ export const Registration: React.FC = () => {
         onChange={handleInputChange}
       />
       <div className={styles.buttonContainer}>
-        <Button text="Registration" />
+        <Button>Registration</Button>
       </div>
       <div className={styles.loginBlock}>
         <span>If you have an account you can </span>
