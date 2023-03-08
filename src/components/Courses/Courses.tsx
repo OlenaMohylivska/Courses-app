@@ -4,19 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import { SearchBar } from './components/SearchBar';
 import { CourseCard } from './components/CourseCard';
 import { Button } from '../../common/Button';
-import { ICourse, IAuthor } from '../../helpers/interfaces';
-import { BUTTON_TEXT_ADD_NEW_COURSE } from '../../constants';
+import { ICourse, IAuthor, IUserState } from '../../helpers/interfaces';
+import { admin, BUTTON_TEXT_ADD_NEW_COURSE } from '../../constants';
 import { ROUTES } from '../../routes';
-import { getAuthorsName } from '../../helpers/getAuthorsName';
+import { getAuthorsName } from '../../helpers/helpers';
 
 import styles from './Courses.module.scss';
 
 type Props = {
   allCourses: ICourse[];
   allAuthors: IAuthor[];
+  user: IUserState;
 };
 
-export const Courses: React.FC<Props> = ({ allCourses, allAuthors }) => {
+export const Courses: React.FC<Props> = ({ allCourses, allAuthors, user }) => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
 
@@ -29,7 +30,7 @@ export const Courses: React.FC<Props> = ({ allCourses, allAuthors }) => {
       ? coursesList.filter((course) => {
           return (
             course.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-            course.id.toLowerCase().includes(searchValue.toLowerCase())
+            course.id!.toLowerCase().includes(searchValue.toLowerCase())
           );
         })
       : coursesList;
@@ -43,13 +44,15 @@ export const Courses: React.FC<Props> = ({ allCourses, allAuthors }) => {
           setSearchValue(event.target.value)
         }
       />
-      <div className={styles.button}>
-        <Button onClick={() => navigate(ROUTES.ADD_COURSE)}>
-          {BUTTON_TEXT_ADD_NEW_COURSE}
-        </Button>
-      </div>
+      {user.role === admin && (
+        <div className={styles.button}>
+          <Button onClick={() => navigate(ROUTES.ADD_COURSE)}>
+            {BUTTON_TEXT_ADD_NEW_COURSE}
+          </Button>
+        </div>
+      )}
       {courses.map((course) => {
-        return <CourseCard key={course.id} course={course} />;
+        return <CourseCard key={course.id} course={course} user={user} />;
       })}
     </div>
   );
