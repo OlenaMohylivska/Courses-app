@@ -1,31 +1,30 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
 import { Logo } from './components/Logo/Logo';
 import { Button } from '../../common/Button';
 import { BUTTON_TEXT_LOGOUT } from '../../constants';
 import { ROUTES } from '../../routes';
-import { logOut } from '../../store/user/actionCreators';
+
+import { resetAll, store, useAppDispatch } from '../../store';
+import { logout } from '../../services';
+import { IUserState } from '../../helpers/interfaces';
 
 import styles from './Header.module.scss';
-import { cleanCourses } from '../../store/courses/actionCreators';
-import { cleanAuthors } from '../../store/authors/actionCreators';
 
 type Props = {
-  userName: string;
+  user: IUserState;
 };
 
-export const Header: React.FC<Props> = ({ userName }) => {
+export const Header: React.FC<Props> = ({ user }) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
 
   const logoutHandler = () => {
+    dispatch(logout());
+    store.dispatch(resetAll());
     localStorage.clear();
-    dispatch(logOut());
-    dispatch(cleanCourses());
-    dispatch(cleanAuthors());
     navigate(ROUTES.LOGIN, { replace: true });
   };
 
@@ -37,7 +36,7 @@ export const Header: React.FC<Props> = ({ userName }) => {
 
       {localStorage.getItem('userToken') && location.pathname !== ROUTES.LOGIN && (
         <div className={styles.actions}>
-          <h4 className={styles.userName}>{userName}</h4>
+          <h4 className={styles.userName}>{user.name}</h4>
           <Button onClick={logoutHandler}>{BUTTON_TEXT_LOGOUT}</Button>
         </div>
       )}

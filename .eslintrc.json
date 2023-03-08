@@ -62,6 +62,7 @@
                 "max-len": ["error", { "code": 80 }],
                 "endOfLine": "auto"
             }
-        ]
+        ],
+        "no-param-reassign": ["off", { "files": ["src/**/*Slice.tsx"] }]
     }
 }

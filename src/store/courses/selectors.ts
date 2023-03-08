@@ -1,3 +1,3 @@
-import { IState } from '../../helpers/interfaces';
+import { IState } from '../index';
 
-export const getCourses = (state: IState) => state.courses;
+export const getCourses = (state: IState) => state.courses.courses;

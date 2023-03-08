@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { ROUTES } from '../../routes';
 import { ICourse } from '../../helpers/interfaces';
-import { getCourseDuration } from '../../helpers/getCourseDuration';
+import { getCourseDuration } from '../../helpers/helpers';
 
 import styles from './CourseInfo.module.scss';
 

@@ -6,7 +6,7 @@ import styles from './Input.module.scss';
 type Props = {
   placeholderText: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  value: string | number;
+  value?: string | number;
   inputType: string;
   label?: string;
   name?: string;

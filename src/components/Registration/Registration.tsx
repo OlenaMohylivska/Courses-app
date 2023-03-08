@@ -1,26 +1,34 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 import { IUser } from '../../helpers/interfaces';
 import { Input } from '../../common/Input';
 import { Button } from '../../common/Button/Button';
 import { ROUTES } from '../../routes';
+import { register } from '../../services';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { getUserError } from '../../store/user/selectors';
+import { resetUserError } from '../../store/user/userSlice';
 
 import styles from './Registration.module.scss';
 
-const baseUrl = process.env.REACT_APP_BASE_BACKEND_URL;
-
 export const Registration: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [newUser, setNewUser] = useState<IUser>({
     name: '',
     email: '',
     password: '',
   });
 
-  const [hasError, setError] = useState(false);
+  const registerError = useAppSelector(getUserError);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (registerError) dispatch(resetUserError());
+    };
+  }, []);
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
@@ -29,21 +37,11 @@ export const Registration: React.FC = () => {
   };
 
   const createUser = () => {
-    axios
-      .post(`${baseUrl}/register`, newUser, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((response) => {
-        if (response.data.successful) {
-          navigate(ROUTES.LOGIN, { replace: true });
-        }
-      })
-      .catch((error) => {
-        console.log(error.message);
-        setError(error.message);
-      });
+    dispatch(register(newUser)).then((response) => {
+      if (response.payload) {
+        navigate(ROUTES.LOGIN, { replace: true });
+      }
+    });
   };
 
   return (
@@ -87,7 +85,7 @@ export const Registration: React.FC = () => {
         <Link className={styles.link} replace to={ROUTES.LOGIN}>
           Login
         </Link>
-        {hasError && <p>Sorry, Sign up failed!</p>}
+        {registerError && <p>Sorry, Sign up failed!</p>}
       </div>
     </form>
   );

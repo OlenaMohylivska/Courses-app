@@ -1,26 +1,26 @@
 import React, { ChangeEvent, useState } from 'react';
 import { FormControl } from '@mui/material';
-import { v4 as toGenerateId } from 'uuid';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '../../common/Button';
 import { Input } from '../../common/Input';
 import { TextArea } from '../../common/TextArea';
 import { AuthorItem } from './components/AuthorItem';
-import { getCourseDuration } from '../../helpers/getCourseDuration';
+import { getCourseDuration } from '../../helpers/helpers';
 import { IAuthor, ICourse } from '../../helpers/interfaces';
 import {
   BUTTON_TEXT_CREATE_COURSE,
   BUTTON_TEXT_CREATE_AUTHOR,
   BUTTON_TEXT_ADD_AUTHOR,
   BUTTON_TEXT_DELETE_AUTHOR,
+  BUTTON_TEXT_UPDATE_COURSE,
 } from '../../constants';
 import { ROUTES } from '../../routes';
-import { addCourse } from '../../store/courses/actionCreators';
-import { addAuthor } from '../../store/authors/actionCreators';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { addAuthor, postCourse, updateCourse } from '../../services';
+import { getCourses } from '../../store/courses/selectors';
 
-import styles from './CreateCourse.module.scss';
+import styles from './CourseForm.module.scss';
 
 type Props = {
   allAuthors: IAuthor[];
@@ -28,24 +28,35 @@ type Props = {
 
 const errorMessage = 'Please, fill in all fields';
 
-export const CreateCourse: React.FC<Props> = ({ allAuthors }) => {
+export const CourseForm: React.FC<Props> = ({ allAuthors }) => {
+  const dispatch = useAppDispatch();
+  const allCourses: ICourse[] = useAppSelector(getCourses);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { courseId: paramsId } = useParams();
+  const currentCourse = allCourses.find(({ id }) => id === paramsId);
   const [authorName, setAuthorName] = useState('');
-  const [newCourse, setNewCourse] = useState<ICourse>({
-    id: toGenerateId(),
-    title: '',
-    description: '',
-    creationDate: new Date().toLocaleDateString('en-GB'),
-    duration: 0,
-    authors: [],
-  });
+  const [newCourse, setNewCourse] = useState<ICourse>(
+    currentCourse || {
+      title: '',
+      description: '',
+      creationDate: new Date().toLocaleDateString('en-GB'),
+      duration: 0,
+      authors: [],
+    }
+  );
 
   const onAuthorCreate = () => {
     if (authorName.length >= 2) {
-      dispatch(addAuthor({ id: toGenerateId(), name: authorName }));
+      dispatch(addAuthor({ name: authorName }));
       setAuthorName('');
     }
+  };
+
+  const handleDurationChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setNewCourse({
+      ...newCourse,
+      duration: Number(event.target.value),
+    });
   };
 
   const handleInputChange = (
@@ -66,7 +77,12 @@ export const CreateCourse: React.FC<Props> = ({ allAuthors }) => {
       return;
     }
 
-    dispatch(addCourse(newCourse));
+    if (paramsId) {
+      dispatch(updateCourse(newCourse));
+    } else {
+      dispatch(postCourse(newCourse));
+    }
+
     navigate(ROUTES.COURSES, { replace: false });
   };
 
@@ -81,7 +97,11 @@ export const CreateCourse: React.FC<Props> = ({ allAuthors }) => {
           inputType="text"
           name="title"
         />
-        <Button onClick={saveCourse}>{BUTTON_TEXT_CREATE_COURSE}</Button>
+        {paramsId ? (
+          <Button onClick={saveCourse}>{BUTTON_TEXT_UPDATE_COURSE}</Button>
+        ) : (
+          <Button onClick={saveCourse}>{BUTTON_TEXT_CREATE_COURSE}</Button>
+        )}
       </div>
       <TextArea
         placeholder="Enter description..."
@@ -107,7 +127,7 @@ export const CreateCourse: React.FC<Props> = ({ allAuthors }) => {
           <Input
             placeholderText="Enter duration in minutes..."
             value={newCourse.duration > 0 ? newCourse.duration : ''}
-            onChange={handleInputChange}
+            onChange={handleDurationChange}
             inputType="number"
             name="duration"
           />
@@ -123,19 +143,24 @@ export const CreateCourse: React.FC<Props> = ({ allAuthors }) => {
         <div className={styles.existedAuthorsBlock}>
           <h4 className={styles.title}>Authors</h4>
 
-          {allAuthors.map((author) => (
-            <AuthorItem
-              authorName={author.name}
-              key={author.id}
-              buttonText={BUTTON_TEXT_ADD_AUTHOR}
-              onBtnClick={() =>
-                setNewCourse({
-                  ...newCourse,
-                  authors: [...newCourse.authors, author.id],
-                })
-              }
-            />
-          ))}
+          {allAuthors.map((author) => {
+            if (!newCourse.authors.find((id) => author.id === id)) {
+              return (
+                <AuthorItem
+                  authorName={author.name}
+                  key={author.id}
+                  buttonText={BUTTON_TEXT_ADD_AUTHOR}
+                  onBtnClick={() =>
+                    setNewCourse({
+                      ...newCourse,
+                      authors: [...newCourse.authors, author?.id ?? ''],
+                    })
+                  }
+                />
+              );
+            }
+            return null;
+          })}
         </div>
         <div className={styles.courseAuthorsBlock}>
           <h4 className={styles.title}>Course authors</h4>
@@ -144,7 +169,7 @@ export const CreateCourse: React.FC<Props> = ({ allAuthors }) => {
               const author = allAuthors.find((el) => el.id === authorId);
               return (
                 <AuthorItem
-                  authorName={author!.name}
+                  authorName={author?.name ?? ''}
                   key={authorId}
                   buttonText={BUTTON_TEXT_DELETE_AUTHOR}
                   onBtnClick={() =>
